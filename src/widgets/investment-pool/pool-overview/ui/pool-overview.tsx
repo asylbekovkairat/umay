@@ -1,11 +1,22 @@
-import { HardCap, RemainingCap } from "@/src/entities/investment-pool/cap";
+import {
+  HardCap,
+  RemainingCap,
+  useHardCap,
+} from "@/src/entities/investment-pool/cap";
 import { PoolBalance } from "@/src/entities/investment-pool/pool-balance";
 import { RedeemStatus } from "@/src/entities/investment-pool/redeem-status";
 import { SaleStatus } from "@/src/entities/investment-pool/sale-status";
-import { TotalRaised } from "@/src/entities/investment-pool/total-raised";
+import {
+  TotalRaised,
+  useTotalRaised,
+} from "@/src/entities/investment-pool/total-raised";
 import { Card } from "@/src/shared/ui/card";
+import { ProgressBar } from "@/src/shared/ui/progress-bar";
 
 export function PoolOverview() {
+  const { hardCapUSDTRaw } = useHardCap();
+  const { totalRaisedUSDTRaw } = useTotalRaised();
+
   return (
     <Card title="Pool Overview">
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -16,6 +27,11 @@ export function PoolOverview() {
         <RemainingCap />
         <PoolBalance />
       </div>
+      <ProgressBar
+        value={totalRaisedUSDTRaw ?? BigInt(0)}
+        max={hardCapUSDTRaw ?? BigInt(0)}
+        aria-label="Fundraising progress"
+      />
     </Card>
   );
 }

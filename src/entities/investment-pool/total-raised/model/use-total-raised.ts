@@ -18,10 +18,13 @@ export function useTotalRaised() {
     functionName: "usdtDecimals",
   });
 
-  const totalRaised =
+  const totalRaisedUSDTFormatted =
     totalRaisedUSDT && usdtDecimals
       ? formatUnits(totalRaisedUSDT, usdtDecimals)
       : null;
 
-  return { totalRaised };
+  return {
+    totalRaisedUSDT: totalRaisedUSDTFormatted,
+    totalRaisedUSDTRaw: totalRaisedUSDT,
+  };
 }

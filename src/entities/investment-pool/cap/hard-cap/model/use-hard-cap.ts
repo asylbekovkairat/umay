@@ -1,4 +1,5 @@
 import { investmentPoolAbi } from "@/src/shared/abi/investment-pool";
+import { formatUnits } from "viem";
 import { useReadContract } from "wagmi";
 
 const POOL_ADDRESS = process.env.NEXT_PUBLIC_POOL_ADDRESS as `0x${string}`;
@@ -17,5 +18,11 @@ export function useHardCap() {
     functionName: "usdtDecimals",
   });
 
-  return { hardCapUSDT, usdtDecimals };
+  const hardCapUSDTFormatted =
+    hardCapUSDT && usdtDecimals ? formatUnits(hardCapUSDT, usdtDecimals) : null;
+
+  return {
+    hardCapUSDT: hardCapUSDTFormatted,
+    hardCapUSDTRaw: hardCapUSDT,
+  };
 }
