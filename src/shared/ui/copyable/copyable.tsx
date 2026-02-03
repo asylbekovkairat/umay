@@ -61,8 +61,8 @@ export function Copyable({
       type="button"
       onClick={handleCopy}
       className={[
-        "inline-flex items-center gap-2 rounded-lg border border-border bg-card-bg px-3 py-2 font-mono text-sm text-foreground",
-        "hover:bg-muted-bg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+        "focus:outline-none! focus:ring-2! focus:ring-ring! focus:ring-offset-2!",
+        "inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 font-mono text-sm text-foreground",
         "transition-colors",
         className,
       ]

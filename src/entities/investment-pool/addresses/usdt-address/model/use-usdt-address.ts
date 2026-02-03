@@ -2,12 +2,12 @@ import { investmentPoolAbi } from "@/src/shared/abi/investment-pool";
 import { env } from "@/src/shared/consts/env";
 import { useReadContract } from "wagmi";
 
-export function useSaleStatus() {
-  const { data: saleActive } = useReadContract({
+export function useUsdtAddress() {
+  const { data: usdtAddress } = useReadContract({
     address: env.poolAddress,
     abi: investmentPoolAbi,
-    functionName: "saleActive",
+    functionName: "usdt",
   });
 
-  return { saleActive };
+  return { usdtAddress: usdtAddress ?? "N/A" };
 }

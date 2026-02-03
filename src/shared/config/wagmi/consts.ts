@@ -2,19 +2,14 @@ import { http, HttpTransport } from "viem";
 import { cookieStorage, createStorage } from "wagmi";
 import { base, mainnet, polygon } from "wagmi/chains";
 import { injected, walletConnect } from "wagmi/connectors";
-
-const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL_POLYGON;
-const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
-
-if (!rpcUrl) throw new Error("Missing NEXT_PUBLIC_RPC_URL_POLYGON");
-if (!projectId) throw new Error("Missing NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID");
+import { env } from "../../consts/env";
 
 export const chains = [polygon, mainnet, base] as const;
 
 export const transports: Record<number, HttpTransport> = {
-  [polygon.id]: http(rpcUrl),
-  [mainnet.id]: http(rpcUrl),
-  [base.id]: http(rpcUrl),
+  [polygon.id]: http(env.rpcUrl),
+  [mainnet.id]: http(env.rpcUrl),
+  [base.id]: http(env.rpcUrl),
 };
 
 export const storage = createStorage({
@@ -24,7 +19,7 @@ export const storage = createStorage({
 export const connectors = [
   injected(),
   walletConnect({
-    projectId,
+    projectId: env.projectId,
     metadata: {
       name: "Umay",
       description: "Buy and redeem pool tokens",
