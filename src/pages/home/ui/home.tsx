@@ -1,7 +1,8 @@
 "use client";
 
+import { ConnectedWallet } from "@/src/widgets/connected-wallet";
 import { Header } from "@/src/widgets/header";
-import { PoolOverview } from "@/src/widgets/investment-pool/pool-overview";
+import { PoolOverview } from "@/src/widgets/pool-overview";
 
 export function HomePage() {
   return (
@@ -10,6 +11,7 @@ export function HomePage() {
 
       <main className="mx-auto max-w-5xl space-y-6 px-4 py-8 sm:px-6">
         <PoolOverview />
+        <ConnectedWallet />
       </main>
 
       <footer className="border-t border-border bg-card-bg">

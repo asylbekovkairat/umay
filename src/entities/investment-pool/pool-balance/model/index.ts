@@ -1,1 +1,1 @@
-export { useTotalRaised } from "./use-pool-balance";
+export { usePoolBalance } from "./use-pool-balance";
