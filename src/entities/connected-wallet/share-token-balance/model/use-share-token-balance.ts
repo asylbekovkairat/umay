@@ -28,7 +28,7 @@ export function useShareTokenBalance() {
       : null;
 
   return {
-    shareBalanceRaw,
-    shareBalance,
+    shareBalanceRaw: shareBalanceRaw ?? 0,
+    shareBalance: shareBalance ?? 0,
   };
 }

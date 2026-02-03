@@ -26,8 +26,6 @@ export function useWalletBalance() {
     args: address ? [address as `0x${string}`] : undefined,
   });
 
-  console.log("usdtBalanceRaw", usdtBalanceRaw);
-
   return {
     usdtBalanceRaw,
     usdtBalance:
