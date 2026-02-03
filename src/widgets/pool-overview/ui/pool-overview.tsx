@@ -9,6 +9,7 @@ import {
   useHardCap,
 } from "@/src/entities/investment-pool/cap";
 import { PoolBalance } from "@/src/entities/investment-pool/pool-balance";
+import { PoolMode } from "@/src/entities/investment-pool/pool-mode";
 import { RedeemStatus } from "@/src/entities/investment-pool/redeem-status";
 import { SaleStatus } from "@/src/entities/investment-pool/sale-status";
 import {
@@ -23,7 +24,7 @@ export function PoolOverview() {
   const { totalRaisedUSDTRaw } = useTotalRaised();
 
   return (
-    <Card title="Pool Overview">
+    <Card title="Pool Overview" titleRight={<PoolMode />}>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <SaleStatus />
         <RedeemStatus />
