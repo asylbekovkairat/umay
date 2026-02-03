@@ -1,3 +1,4 @@
+import { useUsdtDecimals } from "@/src/entities/shared/usdt-decimals/model/use-usdt-decimals";
 import { erc20Abi } from "@/src/shared/abi/erc20";
 import { investmentPoolAbi } from "@/src/shared/abi/investment-pool";
 import { env } from "@/src/shared/consts/env";
@@ -7,11 +8,7 @@ import { useAccount, useReadContract } from "wagmi";
 export function useWalletBalance() {
   const { address } = useAccount();
 
-  const { data: usdtDecimals } = useReadContract({
-    address: env.poolAddress,
-    abi: investmentPoolAbi,
-    functionName: "usdtDecimals",
-  });
+  const { usdtDecimals } = useUsdtDecimals();
 
   const { data: usdtAddress } = useReadContract({
     address: env.poolAddress,
