@@ -1,5 +1,6 @@
 /* External dependencies */
 import { Providers } from "@/src/app/providers";
+import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { headers } from "next/headers";
 import { PropsWithChildren } from "react";
@@ -9,7 +10,6 @@ import { cookieToInitialState } from "wagmi";
 import { wagmiConfig } from "@/src/shared/config/wagmi";
 import { Footer } from "@/src/widgets/footer";
 import { Header } from "@/src/widgets/header";
-import type { Metadata } from "next";
 import "./globals.css";
 
 const geistSans = Geist({
