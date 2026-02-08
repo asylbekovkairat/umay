@@ -1,3 +1,4 @@
+/* Local dependencies */
 import { useWalletBalance } from "../model";
 
 export function WalletBalance() {

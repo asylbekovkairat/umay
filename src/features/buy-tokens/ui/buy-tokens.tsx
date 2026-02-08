@@ -1,5 +1,9 @@
 "use client";
 
+/* External dependencies */
+import { ReactNode, useCallback, useState, type ChangeEvent } from "react";
+
+/* Local dependencies */
 import {
   AlertTriangleIcon,
   ArrowRightIcon,
@@ -13,7 +17,6 @@ import {
 import { formatDisplay } from "@/src/shared/lib/format-money";
 import { Button } from "@/src/shared/ui/button";
 import { Card } from "@/src/shared/ui/card";
-import { ReactNode, useCallback, useState, type ChangeEvent } from "react";
 import { BuyFlowMode, useBuyFlow } from "../model";
 import { StepIndicator } from "./step-indicator";
 

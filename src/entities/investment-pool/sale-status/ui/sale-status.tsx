@@ -1,6 +1,7 @@
-import { StatItem } from "@/src/shared/ui/stat-item";
-import { useSaleStatus } from "../model/use-sale-status";
+/* Local dependencies */
 import { Badge } from "@/src/shared/ui/badge";
+import { StatItem } from "@/src/shared/ui/stat-item";
+import { useSaleStatus } from "../model";
 
 export function SaleStatus() {
   const { saleActive } = useSaleStatus();

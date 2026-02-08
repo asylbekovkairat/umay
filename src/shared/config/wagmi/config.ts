@@ -1,7 +1,7 @@
-import { createPublicClient, http } from "viem";
-import { polygon } from "viem/chains";
+/* External dependencies */
 import { Config, createConfig } from "wagmi";
-import { env } from "../../consts/env";
+
+/* Local dependencies */
 import { chains, connectors, storage, transports } from "./consts";
 
 declare module "wagmi" {

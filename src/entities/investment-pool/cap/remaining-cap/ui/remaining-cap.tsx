@@ -1,5 +1,6 @@
+/* Local dependencies */
 import { StatItem } from "@/src/shared/ui/stat-item";
-import { useRemainingCap } from "../model/use-remaining-cap";
+import { useRemainingCap } from "../model";
 
 export function RemainingCap() {
   const { remainingToCap } = useRemainingCap();

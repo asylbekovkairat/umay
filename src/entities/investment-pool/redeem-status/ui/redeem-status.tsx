@@ -1,6 +1,7 @@
+/* Local dependencies */
 import { Badge } from "@/src/shared/ui/badge";
 import { StatItem } from "@/src/shared/ui/stat-item";
-import { useRedeemStatus } from "../model/use-redeem-status";
+import { useRedeemStatus } from "../model";
 
 export function RedeemStatus() {
   const { redeemActive } = useRedeemStatus();

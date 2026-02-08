@@ -1,6 +1,9 @@
+/* External dependencies */
+import { formatUnits } from "viem";
+
+/* Local dependencies */
 import { useRemainingCap } from "@/src/entities/investment-pool/cap";
 import { useUsdtDecimals } from "@/src/entities/shared/usdt-decimals";
-import { formatUnits } from "viem";
 import { useWalletBalance } from "../../balance/model";
 
 export function useMaxBuy() {

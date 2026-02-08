@@ -1,5 +1,6 @@
+/* Local dependencies */
 import { StatItem } from "@/src/shared/ui/stat-item";
-import { useTotalRaised } from "../model/use-total-raised";
+import { useTotalRaised } from "../model";
 
 export function TotalRaised() {
   const { totalRaisedUSDT } = useTotalRaised();

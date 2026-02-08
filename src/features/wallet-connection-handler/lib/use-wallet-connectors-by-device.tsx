@@ -1,5 +1,8 @@
-import { useIsMobile } from "@/src/shared/lib/is-mobile";
+/* External dependencies */
 import { useConnectors } from "wagmi";
+
+/* Local dependencies */
+import { useIsMobile } from "@/src/shared/lib/is-mobile";
 
 const mobileConnectorsIds = ["walletConnect"];
 const desktopConnectorsIds = ["injected"];

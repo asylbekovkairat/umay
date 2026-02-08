@@ -1,9 +1,12 @@
+/* External dependencies */
+import { formatUnits } from "viem";
+import { useAccount, useReadContract } from "wagmi";
+
+/* Local dependencies */
 import { useShareTokenAddress } from "@/src/entities/investment-pool/addresses";
 import { erc20Abi } from "@/src/shared/abi/erc20";
 import { investmentPoolAbi } from "@/src/shared/abi/investment-pool";
 import { env } from "@/src/shared/consts/env";
-import { formatUnits } from "viem";
-import { useAccount, useReadContract } from "wagmi";
 
 export function useShareTokenBalance() {
   const { address } = useAccount();

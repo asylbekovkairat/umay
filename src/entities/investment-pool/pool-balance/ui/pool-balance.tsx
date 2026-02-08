@@ -1,3 +1,4 @@
+/* Local dependencies */
 import { StatItem } from "@/src/shared/ui/stat-item";
 import { usePoolBalance } from "../model/use-pool-balance";
 

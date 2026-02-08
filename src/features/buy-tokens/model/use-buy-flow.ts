@@ -1,13 +1,6 @@
 "use client";
 
-import { useRemainingCap } from "@/src/entities/investment-pool/cap";
-import { useSaleStatus } from "@/src/entities/investment-pool/sale-status";
-import { useUsdtDecimals } from "@/src/entities/shared/usdt-decimals";
-import { useWalletBalance } from "@/src/entities/wallet/balance/model";
-import { useShareTokenBalance } from "@/src/entities/wallet/share-token-balance";
-import { erc20Abi } from "@/src/shared/abi/erc20";
-import { investmentPoolAbi } from "@/src/shared/abi/investment-pool";
-import { env } from "@/src/shared/consts/env";
+/* External dependencies */
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { formatUnits, maxUint256, parseUnits } from "viem";
 import { polygon } from "viem/chains";
@@ -19,6 +12,16 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
+
+/* Local dependencies */
+import { useRemainingCap } from "@/src/entities/investment-pool/cap";
+import { useSaleStatus } from "@/src/entities/investment-pool/sale-status";
+import { useUsdtDecimals } from "@/src/entities/shared/usdt-decimals";
+import { useWalletBalance } from "@/src/entities/wallet/balance/model";
+import { useShareTokenBalance } from "@/src/entities/wallet/share-token-balance";
+import { erc20Abi } from "@/src/shared/abi/erc20";
+import { investmentPoolAbi } from "@/src/shared/abi/investment-pool";
+import { env } from "@/src/shared/consts/env";
 import { BuyFlowMode, UseBuyFlowReturn } from "./types";
 
 function extractErrorMessage(error: unknown): string {

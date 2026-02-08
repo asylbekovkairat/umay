@@ -1,3 +1,4 @@
+/* Local dependencies */
 import { useMaxBuy } from "../model";
 
 export function MaxBuy() {

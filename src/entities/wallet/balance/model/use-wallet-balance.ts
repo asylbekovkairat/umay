@@ -1,9 +1,12 @@
-import { useUsdtDecimals } from "@/src/entities/shared/usdt-decimals/model/use-usdt-decimals";
+/* External dependencies */
+import { formatUnits } from "viem";
+import { useAccount, useReadContract } from "wagmi";
+
+/* Local dependencies */
+import { useUsdtDecimals } from "@/src/entities/shared/usdt-decimals";
 import { erc20Abi } from "@/src/shared/abi/erc20";
 import { investmentPoolAbi } from "@/src/shared/abi/investment-pool";
 import { env } from "@/src/shared/consts/env";
-import { formatUnits } from "viem";
-import { useAccount, useReadContract } from "wagmi";
 
 export function useWalletBalance() {
   const { address } = useAccount();

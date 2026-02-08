@@ -1,3 +1,4 @@
+/* Local dependencies */
 import { Copyable } from "@/src/shared/ui/copyable";
 import { useShareTokenAddress } from "../model";
 

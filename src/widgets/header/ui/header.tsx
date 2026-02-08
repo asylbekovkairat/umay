@@ -1,4 +1,4 @@
-import { WalletConnectionHandler } from "@/src/features/wallet-connection-handler";
+/* External dependencies */
 import Link from "next/link";
 
 export function Header() {

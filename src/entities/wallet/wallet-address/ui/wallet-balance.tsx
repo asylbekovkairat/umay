@@ -1,5 +1,8 @@
-import { Copyable } from "@/src/shared/ui/copyable";
+/* External dependencies */
 import { useConnection } from "wagmi";
+
+/* Local dependencies */
+import { Copyable } from "@/src/shared/ui/copyable";
 
 export function WalletAddress() {
   const { address } = useConnection();

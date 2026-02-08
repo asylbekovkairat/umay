@@ -1,3 +1,4 @@
+/* Local dependencies */
 import { env } from "@/src/shared/consts/env";
 import { Copyable } from "@/src/shared/ui/copyable";
 

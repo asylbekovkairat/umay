@@ -1,7 +1,10 @@
+/* External dependencies */
 import { http, HttpTransport } from "viem";
 import { cookieStorage, createStorage } from "wagmi";
 import { base, mainnet, polygon } from "wagmi/chains";
 import { injected, walletConnect } from "wagmi/connectors";
+
+/* Local dependencies */
 import { env } from "../../consts/env";
 
 export const chains = [polygon, mainnet, base] as const;

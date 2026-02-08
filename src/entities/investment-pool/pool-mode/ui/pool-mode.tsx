@@ -1,5 +1,4 @@
-import { Badge } from "@/src/shared/ui/badge";
-import { StatItem } from "@/src/shared/ui/stat-item";
+/* Local dependencies */
 import { usePoolMode } from "../model";
 
 export function PoolMode() {

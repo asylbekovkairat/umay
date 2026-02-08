@@ -1,5 +1,6 @@
+/* Local dependencies */
 import { StatItem } from "@/src/shared/ui/stat-item";
-import { useHardCap } from "../model/use-hard-cap";
+import { useHardCap } from "../model";
 
 export function HardCap() {
   const { hardCapUSDT } = useHardCap();

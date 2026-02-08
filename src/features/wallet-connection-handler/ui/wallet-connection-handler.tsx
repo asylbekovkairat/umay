@@ -1,5 +1,8 @@
-import { Button } from "@/src/shared/ui/button";
+/* External dependencies */
 import { useConnect, useConnection, useDisconnect } from "wagmi";
+
+/* Local dependencies */
+import { Button } from "@/src/shared/ui/button";
 import { useWalletConnectorsByDevice } from "../lib/use-wallet-connectors-by-device";
 
 export function WalletConnectionHandler() {

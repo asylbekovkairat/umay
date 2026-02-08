@@ -1,3 +1,4 @@
+/* Local dependencies */
 import { useShareTokenBalance } from "../model";
 
 export function ShareTokenBalance() {

@@ -1,3 +1,4 @@
+/* Local dependencies */
 import { useRedeemStatus } from "../../redeem-status/model";
 import { useSaleStatus } from "../../sale-status/model";
 

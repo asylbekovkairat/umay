@@ -1,13 +1,16 @@
 "use client";
 
+/* External dependencies */
+import { usePathname } from "next/navigation";
+import { useConnection } from "wagmi";
+
+/* Local dependencies */
 import { useWalletBalance } from "@/src/entities/wallet/balance/model";
 import { MaxBuy } from "@/src/entities/wallet/max-buy";
 import { ShareTokenBalance } from "@/src/entities/wallet/share-token-balance";
 import { WalletAddress } from "@/src/entities/wallet/wallet-address";
 import { WalletConnectionHandler } from "@/src/features/wallet-connection-handler";
 import { Card } from "@/src/shared/ui/card";
-import { usePathname } from "next/navigation";
-import { useConnection } from "wagmi";
 
 export function WalletCard() {
   const { usdtBalance } = useWalletBalance();
