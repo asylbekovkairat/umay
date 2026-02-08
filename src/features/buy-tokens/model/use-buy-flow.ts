@@ -14,66 +14,7 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-export type BuyFlowMode =
-  | "CONNECT"
-  | "WRONG_NETWORK"
-  | "SALE_INACTIVE"
-  | "INVALID_AMOUNT"
-  | "APPROVE"
-  | "BUY"
-  | "PENDING"
-  | "SUCCESS"
-  | "ERROR";
-
-export interface UseBuyFlowReturn {
-  /** Current mode of the state machine */
-  mode: BuyFlowMode;
-  /** True while initial chain reads are loading */
-  isLoading: boolean;
-
-  // ─── Formatted values for UI ────────────────────────────────────────────
-  /** User's USDT balance (from formatUnits) */
-  usdtBalance: string;
-  /** Max available = min(balance, remaining) (from formatUnits) */
-  maxBuy: string;
-  /** Max available as a JS number for convenience */
-  maxBuyNum: number;
-  /** Preview tokens the user will receive (from formatUnits) */
-  previewTokens: string;
-  /** Whether sale is currently active */
-  saleActive: boolean | undefined;
-  /** USDT decimals read from pool */
-  usdtDecimals: number | undefined;
-  /** Share-token decimals read from pool */
-  shareTokenDecimals: number | undefined;
-  /** Buy transaction hash (available after buy tx submitted) */
-  txHash: `0x${string}` | undefined;
-  /** Human-readable error message (on ERROR mode) */
-  errorMessage: string | undefined;
-  /** Input validation error (shown below the input field) */
-  validationError: string | null;
-
-  // ─── Actions ────────────────────────────────────────────────────────────
-  /** Connect wallet (uses first available connector) */
-  connectWallet: () => void;
-  /** Switch wallet to Polygon */
-  switchNetwork: () => void;
-  /** Send approve tx */
-  approve: () => void;
-  /** Send buyTokens tx */
-  buy: () => void;
-  /** Reset after SUCCESS / ERROR (clears tx state so user can buy again) */
-  reset: () => void;
-  /** All configured wagmi connectors (for advanced UI) */
-  connectors: readonly any[];
-  /** Connect with a specific connector */
-  connectWith: (connector: any) => void;
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+import { BuyFlowMode, UseBuyFlowReturn } from "./types";
 
 function extractErrorMessage(error: unknown): string {
   if (!error) return "Unknown error";
@@ -91,18 +32,13 @@ function extractErrorMessage(error: unknown): string {
   return String(error).slice(0, 120);
 }
 
-// ─── Hook ─────────────────────────────────────────────────────────────────────
-
 export function useBuyFlow(inputUSDT: string): UseBuyFlowReturn {
-  // ── Wallet ────────────────────────────────────────────────────────────────
   const { address, isConnected, chainId } = useAccount();
   const { connect, connectors } = useConnect();
   const { switchChain } = useSwitchChain();
 
-  // ── Internal flag: waiting for allowance refetch after approve ──────────
   const [pendingAllowanceRefresh, setPendingAllowanceRefresh] = useState(false);
 
-  // ── Pool reads (chain-only, no wallet required) ─────────────────────────
   const { data: saleActive } = useReadContract({
     address: env.poolAddress,
     abi: investmentPoolAbi,
@@ -133,7 +69,6 @@ export function useBuyFlow(inputUSDT: string): UseBuyFlowReturn {
     functionName: "shareTokenDecimals",
   });
 
-  // ── User-specific reads ─────────────────────────────────────────────────
   const { data: balanceRaw, refetch: refetchBalance } = useReadContract({
     address: usdtAddress,
     abi: erc20Abi,
@@ -148,7 +83,6 @@ export function useBuyFlow(inputUSDT: string): UseBuyFlowReturn {
     args: address ? [address, env.poolAddress] : undefined,
   });
 
-  // ── Parse input → amountRaw ─────────────────────────────────────────────
   const amountRaw = useMemo(() => {
     if (!inputUSDT || usdtDec === undefined) return undefined;
     try {
@@ -159,14 +93,12 @@ export function useBuyFlow(inputUSDT: string): UseBuyFlowReturn {
     }
   }, [inputUSDT, usdtDec]);
 
-  // ── Max buy = min(balance, remaining) ───────────────────────────────────
   const maxBuyRaw = useMemo(() => {
     if (balanceRaw === undefined || remainingRaw === undefined)
       return undefined;
     return balanceRaw < remainingRaw ? balanceRaw : remainingRaw;
   }, [balanceRaw, remainingRaw]);
 
-  // ── On-chain preview ────────────────────────────────────────────────────
   const { data: previewRaw } = useReadContract({
     address: env.poolAddress,
     abi: investmentPoolAbi,
@@ -174,7 +106,6 @@ export function useBuyFlow(inputUSDT: string): UseBuyFlowReturn {
     args: amountRaw && amountRaw > BigInt(0) ? [amountRaw] : undefined,
   });
 
-  // ── Write contracts (two independent instances) ─────────────────────────
   const {
     writeContract: writeApprove,
     data: approveHash,
@@ -191,7 +122,6 @@ export function useBuyFlow(inputUSDT: string): UseBuyFlowReturn {
     reset: resetBuy,
   } = useWriteContract();
 
-  // ── Transaction receipts ────────────────────────────────────────────────
   const {
     isLoading: isApproveConfirming,
     isSuccess: isApproveConfirmed,
@@ -206,7 +136,6 @@ export function useBuyFlow(inputUSDT: string): UseBuyFlowReturn {
     error: buyReceiptError,
   } = useWaitForTransactionReceipt({ hash: buyHash });
 
-  // ── Side-effect: approve confirmed → refetch allowance ──────────────────
   useEffect(() => {
     if (isApproveConfirmed && !pendingAllowanceRefresh) {
       setPendingAllowanceRefresh(true);
@@ -222,7 +151,6 @@ export function useBuyFlow(inputUSDT: string): UseBuyFlowReturn {
     resetApprove,
   ]);
 
-  // ── Side-effect: buy confirmed → refetch balances ───────────────────────
   useEffect(() => {
     if (isBuyConfirmed) {
       refetchBalance();
@@ -231,31 +159,24 @@ export function useBuyFlow(inputUSDT: string): UseBuyFlowReturn {
     }
   }, [isBuyConfirmed, refetchBalance, refetchAllowance, refetchRemaining]);
 
-  // ── Mode (state machine) ────────────────────────────────────────────────
   const mode = useMemo((): BuyFlowMode => {
-    // Buy transaction lifecycle (highest priority)
     if (isBuySigning || isBuyConfirming) return "PENDING";
     if (isBuyConfirmed) return "SUCCESS";
     if (buyError || isBuyReceiptError) return "ERROR";
 
-    // Approve transaction lifecycle
     if (isApproveSigning || isApproveConfirming || pendingAllowanceRefresh)
       return "PENDING";
     if (approveError || isApproveReceiptError) return "ERROR";
 
-    // Connection
     if (!isConnected) return "CONNECT";
     if (chainId !== polygon.id) return "WRONG_NETWORK";
 
-    // Pool state
     if (saleActive === false) return "SALE_INACTIVE";
 
-    // Amount validation
     if (!amountRaw) return "INVALID_AMOUNT";
     if (maxBuyRaw !== undefined && amountRaw > maxBuyRaw)
       return "INVALID_AMOUNT";
 
-    // Allowance check (if still loading, wait)
     if (allowanceRaw === undefined) return "INVALID_AMOUNT";
     if (amountRaw > allowanceRaw) return "APPROVE";
 
@@ -279,7 +200,6 @@ export function useBuyFlow(inputUSDT: string): UseBuyFlowReturn {
     allowanceRaw,
   ]);
 
-  // ── Formatted values ────────────────────────────────────────────────────
   const usdtBalance = useMemo(() => {
     if (balanceRaw === undefined || usdtDec === undefined) return "0";
     return formatUnits(balanceRaw, usdtDec);
@@ -313,22 +233,16 @@ export function useBuyFlow(inputUSDT: string): UseBuyFlowReturn {
     return undefined;
   }, [buyError, buyReceiptError, approveError, approveReceiptError]);
 
-  // ── Input validation error (user-facing, below input) ─────────────────
   const validationError = useMemo((): string | null => {
-    // Only validate when the user is connected, on right chain, sale active
     if (!isConnected || chainId !== polygon.id) return null;
     if (saleActive === false) return null;
-    // Nothing typed yet → no error
     if (!inputUSDT) return null;
 
-    // Invalid number (parseUnits failed)
     if (usdtDec !== undefined && !amountRaw)
       return "Please enter a valid amount";
 
-    // Data still loading
     if (usdtDec === undefined || maxBuyRaw === undefined) return null;
 
-    // Exceeds max
     if (amountRaw && maxBuyRaw !== undefined && amountRaw > maxBuyRaw) {
       return `Amount exceeds max available (${formatUnits(
         maxBuyRaw,
@@ -347,7 +261,6 @@ export function useBuyFlow(inputUSDT: string): UseBuyFlowReturn {
     maxBuyRaw,
   ]);
 
-  // ── Actions ─────────────────────────────────────────────────────────────
   const connectWallet = useCallback(() => {
     if (connectors.length > 0) {
       connect({ connector: connectors[0] });
@@ -388,26 +301,25 @@ export function useBuyFlow(inputUSDT: string): UseBuyFlowReturn {
     resetBuy();
   }, [resetApprove, resetBuy]);
 
-  // ── Return ──────────────────────────────────────────────────────────────
   return {
-    mode,
+    connectors,
+    errorMessage,
     isLoading,
-    usdtBalance,
     maxBuy,
     maxBuyNum,
+    mode,
     previewTokens,
     saleActive,
-    usdtDecimals: usdtDec,
     shareTokenDecimals: shareDec,
     txHash: buyHash,
-    errorMessage,
+    usdtBalance,
+    usdtDecimals: usdtDec,
     validationError,
-    connectWallet,
-    switchNetwork,
     approve,
     buy,
-    reset,
-    connectors,
+    connectWallet,
     connectWith,
+    reset,
+    switchNetwork,
   };
 }

@@ -1,2 +1,2 @@
-export * from "./circle-arrow-left";
-export * from "./hand-coins";
+export type { IconProps } from "./types";
+export * from "./ui";

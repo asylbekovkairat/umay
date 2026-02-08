@@ -1,7 +1,7 @@
 import { usePoolBalance } from "@/src/entities/investment-pool/pool-balance";
 import { useRedeemStatus } from "@/src/entities/investment-pool/redeem-status";
 import { useSaleStatus } from "@/src/entities/investment-pool/sale-status";
-import { CircleArrowLeft, HandCoins } from "@/src/shared/assets/icons";
+import { CircleArrowLeft, HandCoins } from "@/src/shared/assets/icons/ui";
 import { Button } from "@/src/shared/ui/button";
 import { Card } from "@/src/shared/ui/card";
 import { useRouter } from "next/navigation";
