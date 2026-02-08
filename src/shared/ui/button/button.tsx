@@ -14,13 +14,13 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "border-transparent bg-foreground text-background hover:opacity-90 focus:ring-foreground",
+    "border-transparent bg-accent text-accent-foreground hover:opacity-90 focus:ring-accent",
   secondary:
-    "border-border bg-card-bg text-foreground shadow-sm hover:bg-muted-bg focus:ring-ring",
+    "border-border bg-card text-foreground shadow-sm hover:bg-muted-bg focus:ring-ring",
   ghost:
     "border-transparent bg-transparent text-foreground hover:bg-muted-bg focus:ring-ring",
   danger:
-    "border-transparent bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
+    "border-transparent bg-negative text-white hover:opacity-90 focus:ring-negative",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -53,7 +53,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         aria-busy={loading}
         className={[
           "inline-flex items-center justify-center gap-2 rounded-lg border font-medium transition-colors",
-          "focus:outline-none focus:ring-2 focus:ring-offset-2",
+          "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background",
           "disabled:pointer-events-none disabled:opacity-60",
           variantStyles[variant],
           sizeStyles[size],

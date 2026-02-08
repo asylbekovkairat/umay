@@ -9,8 +9,8 @@ export interface StatItemProps {
 export function StatItem({ label, value, className = "" }: StatItemProps) {
   return (
     <div className={`flex flex-col gap-1 ${className}`}>
-      <span className="text-sm text-gray-500">{label}</span>
-      <span className="text-lg font-semibold text-gray-900">{value}</span>
+      <span className="text-sm text-muted">{label}</span>
+      <span className="text-lg font-semibold text-foreground">{value}</span>
     </div>
   );
 }

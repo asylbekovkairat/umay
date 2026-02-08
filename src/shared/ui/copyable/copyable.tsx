@@ -75,7 +75,7 @@ export function Copyable({
       <span
         className={[
           "text-sm transition-colors",
-          copied ? "text-green-600" : "text-muted-foreground",
+          copied ? "text-positive" : "text-muted",
         ].join(" ")}
         aria-hidden
         title={copied ? "Copied" : "Copy"}

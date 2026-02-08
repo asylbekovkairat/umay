@@ -9,10 +9,10 @@ export interface BadgeProps {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  active: "bg-green-100 text-green-800 border-green-200",
-  inactive: "bg-gray-100 text-gray-600 border-gray-200",
-  warning: "bg-amber-100 text-amber-800 border-amber-200",
-  neutral: "bg-gray-100 text-gray-700 border-gray-200",
+  active: "bg-positive/15 text-positive border-positive/25",
+  inactive: "bg-muted-bg text-muted border-border",
+  warning: "bg-warning/15 text-warning border-warning/25",
+  neutral: "bg-muted-bg text-foreground border-border",
 };
 
 export function Badge({

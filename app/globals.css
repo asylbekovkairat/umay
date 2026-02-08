@@ -1,38 +1,76 @@
 @import "tailwindcss";
 
-/* Light theme only — no dark mode for main UI */
+/* Dark theme — modern minimalism crypto/web3 */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --muted: #737373;
-  --muted-bg: #f5f5f5;
-  --border: #e5e5e5;
-  --card-bg: #ffffff;
-  --ring: #a3a3a3;
+  /* Base */
+  --background: #0b0f1a;        /* deep navy/graphite */
+  --foreground: #e7ecf5;        /* near-white */
+  --muted: #9aa4b2;             /* secondary text */
+  --muted-bg: #111827;          /* surfaces / subtle blocks */
+  --border: rgba(255, 255, 255, 0.08);
+  --card-bg: rgba(255, 255, 255, 0.04);
+  --ring: rgba(163, 230, 53, 0.5); /* lime focus ring */
+
+  /* Accent */
+  --accent: #a3e635;            /* lime */
+  --accent-foreground: #0b0f1a;
+
+  /* Status */
+  --positive: #22c55e;
+  --negative: #fb7185;
+  --warning: #fbbf24;
+
+  /* Optional: soft glow gradient */
+  --bg-gradient: radial-gradient(
+    1200px 800px at 40% -10%,
+    rgba(163, 230, 53, 0.14) 0%,
+    rgba(11, 15, 26, 0.0) 55%
+  );
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
   --color-muted: var(--muted);
   --color-muted-bg: var(--muted-bg);
+
   --color-border: var(--border);
   --color-card-bg: var(--card-bg);
   --color-ring: var(--ring);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --color-warning: var(--warning);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+html, body {
+  height: 100%;
 }
 
-/* Page wrapper: max width 960px, centered, mobile-first padding */
+body {
+  background: var(--bg-gradient), var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Optional: nicer selection */
+::selection {
+  background: rgba(163, 230, 53, 0.25);
+}
+
+/* Page wrapper: wider for dashboards */
 .page-wrapper {
   width: 100%;
-  max-width: 960px;
+  max-width: 1120px;
   margin-left: auto;
   margin-right: auto;
   padding-left: 1rem;
@@ -44,4 +82,21 @@ body {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
   }
+}
+
+/* Optional utility classes you’ll likely want in crypto UI */
+.surface {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+}
+
+.surface-hover:hover {
+  border-color: rgba(163, 230, 53, 0.25);
+}
+
+.soft-shadow {
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.35),
+    0 1px 0 rgba(255, 255, 255, 0.04) inset;
 }

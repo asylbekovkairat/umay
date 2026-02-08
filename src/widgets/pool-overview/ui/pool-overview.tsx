@@ -38,7 +38,7 @@ export function PoolOverview() {
         max={hardCapUSDTRaw ?? BigInt(0)}
         aria-label="Fundraising progress"
       />
-      <dl className="mt-6 grid grid-cols-1 gap-3 border-t border-gray-100 pt-4 sm:grid-cols-3">
+      <dl className="mt-6 grid grid-cols-1 gap-3 border-t border-border pt-4 sm:grid-cols-3">
         <PoolAddress />
         <UsdtAddress />
         <ShareTokenAddress />

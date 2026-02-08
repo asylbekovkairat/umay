@@ -19,8 +19,8 @@ export function ProgressBar(props: ProgressBarProps) {
   return (
     <div className="mt-6">
       <div className="mb-2 flex justify-between text-sm">
-        <span className="text-gray-500">Progress</span>
-        <span className="font-medium text-gray-700">
+        <span className="text-muted">Progress</span>
+        <span className="font-medium text-foreground">
           {Math.round((Number(value) / Number(max)) * 100)}%
         </span>
       </div>
@@ -30,10 +30,10 @@ export function ProgressBar(props: ProgressBarProps) {
         aria-valuemin={0}
         aria-valuemax={Number(max)}
         aria-label={ariaLabel}
-        className={`h-2 w-full overflow-hidden rounded-full bg-gray-200 ${className}`}
+        className={`h-2 w-full overflow-hidden rounded-full bg-muted-bg ${className}`}
       >
         <div
-          className="h-full rounded-full bg-green-500 transition-all duration-300"
+          className="h-full rounded-full bg-accent transition-all duration-300"
           style={{ width: `${percent}%` }}
         />
       </div>

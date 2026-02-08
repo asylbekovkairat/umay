@@ -6,7 +6,7 @@ export function UsdtAddress() {
 
   return (
     <div className="flex items-center justify-between gap-2 sm:flex-col sm:items-start">
-      <dt className="text-sm text-gray-500">USDT address</dt>
+      <dt className="text-sm text-muted">USDT address</dt>
       <dd className="flex items-center gap-1">
         <Copyable className="border-none px-0!" value={usdtAddress} />
       </dd>

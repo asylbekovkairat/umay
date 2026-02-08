@@ -2,8 +2,8 @@ import { WalletConnectionHandler } from "@/src/features/wallet-connection-handle
 
 export function Header() {
   return (
-    <header className="border-b border-border bg-card-bg/80 backdrop-blur">
-      <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-4 px-4 py-4">
+    <header className="border-b border-border bg-card/80 backdrop-blur-glass">
+      <div className="mx-auto flex w-full max-w-dashboard flex-wrap items-center justify-between gap-3 px-4 py-4">
         <div className="flex items-center gap-3">
           <div>
             <h1 className="text-lg font-semibold">Umay</h1>
