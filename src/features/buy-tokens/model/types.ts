@@ -10,23 +10,23 @@ export type BuyFlowMode =
   | "ERROR";
 
 export interface UseBuyFlowReturn {
-  mode: BuyFlowMode;
+  connectors: readonly any[];
+  errorMessage: string | null;
   isLoading: boolean;
-  usdtBalance: string;
   maxBuy: string;
   maxBuyNum: number;
+  mode: BuyFlowMode;
   previewTokens: string;
   saleActive: boolean | undefined;
-  usdtDecimals: number | undefined;
-  shareTokenDecimals: number | undefined;
+  shareTokenDecimals: number | bigint | undefined;
   txHash: `0x${string}` | undefined;
-  errorMessage: string | undefined;
+  usdtBalance: string;
+  usdtDecimals: number | undefined;
   validationError: string | null;
-  connectWallet: () => void;
-  switchNetwork: () => void;
   approve: () => void;
   buy: () => void;
-  reset: () => void;
-  connectors: readonly any[];
+  connectWallet: () => void;
   connectWith: (connector: any) => void;
+  reset: () => void;
+  switchNetwork: () => void;
 }

@@ -7,16 +7,21 @@ import { useReadContract } from "wagmi";
 export function useRemainingCap() {
   const { usdtDecimals } = useUsdtDecimals();
 
-  const { data: remainingToCapUSDT } = useReadContract({
-    address: env.poolAddress,
-    abi: investmentPoolAbi,
-    functionName: "remainingToCapUSDT",
-  });
+  const { data: remainingToCapUSDT, refetch: refetchRemainingToCap } =
+    useReadContract({
+      address: env.poolAddress,
+      abi: investmentPoolAbi,
+      functionName: "remainingToCapUSDT",
+    });
 
   const remainingToCap =
     remainingToCapUSDT && usdtDecimals
       ? formatUnits(remainingToCapUSDT, usdtDecimals)
       : null;
 
-  return { remainingToCapRaw: remainingToCapUSDT, remainingToCap };
+  return {
+    remainingToCapRaw: remainingToCapUSDT,
+    remainingToCap,
+    refetchRemainingToCap,
+  };
 }

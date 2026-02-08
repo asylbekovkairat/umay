@@ -1,5 +1,10 @@
 "use client";
 
+import { useRemainingCap } from "@/src/entities/investment-pool/cap";
+import { useSaleStatus } from "@/src/entities/investment-pool/sale-status";
+import { useUsdtDecimals } from "@/src/entities/shared/usdt-decimals";
+import { useWalletBalance } from "@/src/entities/wallet/balance/model";
+import { useShareTokenBalance } from "@/src/entities/wallet/share-token-balance";
 import { erc20Abi } from "@/src/shared/abi/erc20";
 import { investmentPoolAbi } from "@/src/shared/abi/investment-pool";
 import { env } from "@/src/shared/consts/env";
@@ -17,18 +22,24 @@ import {
 import { BuyFlowMode, UseBuyFlowReturn } from "./types";
 
 function extractErrorMessage(error: unknown): string {
-  if (!error) return "Unknown error";
+  if (!error) {
+    return "Unknown error";
+  }
+
   if (typeof error === "object" && error !== null) {
-    if (
+    const hasShortMessage =
       "shortMessage" in error &&
-      typeof (error as Record<string, unknown>).shortMessage === "string"
-    ) {
+      typeof (error as Record<string, unknown>).shortMessage === "string";
+
+    if (hasShortMessage) {
       return (error as Record<string, string>).shortMessage;
     }
+
     if (error instanceof Error) {
       return error.message.split("\n")[0].slice(0, 120);
     }
   }
+
   return String(error).slice(0, 120);
 }
 
@@ -37,43 +48,20 @@ export function useBuyFlow(inputUSDT: string): UseBuyFlowReturn {
   const { connect, connectors } = useConnect();
   const { switchChain } = useSwitchChain();
 
-  const [pendingAllowanceRefresh, setPendingAllowanceRefresh] = useState(false);
+  const isOnPolygon = chainId === polygon.id;
 
-  const { data: saleActive } = useReadContract({
-    address: env.poolAddress,
-    abi: investmentPoolAbi,
-    functionName: "saleActive",
-  });
+  const { saleActive } = useSaleStatus();
+  const { usdtDecimals } = useUsdtDecimals();
+  const { shareBalanceRaw } = useShareTokenBalance();
+  const { usdtBalanceRaw, refetchBalance } = useWalletBalance();
 
-  const { data: remainingRaw, refetch: refetchRemaining } = useReadContract({
-    address: env.poolAddress,
-    abi: investmentPoolAbi,
-    functionName: "remainingToCapUSDT",
-  });
+  const { remainingToCapRaw, refetchRemainingToCap: refetchRemaining } =
+    useRemainingCap();
 
   const { data: usdtAddress } = useReadContract({
     address: env.poolAddress,
     abi: investmentPoolAbi,
     functionName: "usdt",
-  });
-
-  const { data: usdtDec } = useReadContract({
-    address: env.poolAddress,
-    abi: investmentPoolAbi,
-    functionName: "usdtDecimals",
-  });
-
-  const { data: shareDec } = useReadContract({
-    address: env.poolAddress,
-    abi: investmentPoolAbi,
-    functionName: "shareTokenDecimals",
-  });
-
-  const { data: balanceRaw, refetch: refetchBalance } = useReadContract({
-    address: usdtAddress,
-    abi: erc20Abi,
-    functionName: "balanceOf",
-    args: address ? [address] : undefined,
   });
 
   const { data: allowanceRaw, refetch: refetchAllowance } = useReadContract({
@@ -84,26 +72,38 @@ export function useBuyFlow(inputUSDT: string): UseBuyFlowReturn {
   });
 
   const amountRaw = useMemo(() => {
-    if (!inputUSDT || usdtDec === undefined) return undefined;
+    if (!inputUSDT || usdtDecimals === undefined) return undefined;
     try {
-      const parsed = parseUnits(inputUSDT, usdtDec);
+      const parsed = parseUnits(inputUSDT, usdtDecimals);
       return parsed > BigInt(0) ? parsed : undefined;
     } catch {
       return undefined;
     }
-  }, [inputUSDT, usdtDec]);
+  }, [inputUSDT, usdtDecimals]);
+
+  const hasValidAmount = amountRaw !== undefined;
 
   const maxBuyRaw = useMemo(() => {
-    if (balanceRaw === undefined || remainingRaw === undefined)
+    if (usdtBalanceRaw === undefined || remainingToCapRaw === undefined)
       return undefined;
-    return balanceRaw < remainingRaw ? balanceRaw : remainingRaw;
-  }, [balanceRaw, remainingRaw]);
+    return usdtBalanceRaw < remainingToCapRaw
+      ? usdtBalanceRaw
+      : remainingToCapRaw;
+  }, [usdtBalanceRaw, remainingToCapRaw]);
+
+  const isAmountExceedsMax =
+    hasValidAmount && maxBuyRaw !== undefined && amountRaw > maxBuyRaw;
+
+  const isAllowanceLoaded = allowanceRaw !== undefined;
+
+  const needsApproval =
+    hasValidAmount && isAllowanceLoaded && amountRaw > allowanceRaw;
 
   const { data: previewRaw } = useReadContract({
     address: env.poolAddress,
     abi: investmentPoolAbi,
     functionName: "previewBuy",
-    args: amountRaw && amountRaw > BigInt(0) ? [amountRaw] : undefined,
+    args: hasValidAmount ? [amountRaw] : undefined,
   });
 
   const {
@@ -115,6 +115,19 @@ export function useBuyFlow(inputUSDT: string): UseBuyFlowReturn {
   } = useWriteContract();
 
   const {
+    isLoading: isApproveConfirming,
+    isSuccess: isApproveConfirmed,
+    isError: isApproveReceiptFailed,
+    error: approveReceiptError,
+  } = useWaitForTransactionReceipt({ hash: approveHash });
+
+  const [pendingAllowanceRefresh, setPendingAllowanceRefresh] = useState(false);
+
+  const isApprovePending =
+    isApproveSigning || isApproveConfirming || pendingAllowanceRefresh;
+  const hasApproveError = !!approveError || isApproveReceiptFailed;
+
+  const {
     writeContract: writeBuy,
     data: buyHash,
     isPending: isBuySigning,
@@ -123,18 +136,23 @@ export function useBuyFlow(inputUSDT: string): UseBuyFlowReturn {
   } = useWriteContract();
 
   const {
-    isLoading: isApproveConfirming,
-    isSuccess: isApproveConfirmed,
-    isError: isApproveReceiptError,
-    error: approveReceiptError,
-  } = useWaitForTransactionReceipt({ hash: approveHash });
-
-  const {
     isLoading: isBuyConfirming,
     isSuccess: isBuyConfirmed,
-    isError: isBuyReceiptError,
+    isError: isBuyReceiptFailed,
     error: buyReceiptError,
   } = useWaitForTransactionReceipt({ hash: buyHash });
+
+  const isBuyPending = isBuySigning || isBuyConfirming;
+  const hasBuyError = !!buyError || isBuyReceiptFailed;
+  const isWaitingForSaleStatus = saleActive === undefined;
+  const isWaitingForDecimals = usdtDecimals === undefined;
+  const isWaitingForUsdtAddress =
+    isConnected && isOnPolygon && usdtAddress === undefined;
+  const isLoading =
+    isWaitingForSaleStatus ||
+    isWaitingForDecimals ||
+    isWaitingForUsdtAddress ||
+    isBuyPending;
 
   useEffect(() => {
     if (isApproveConfirmed && !pendingAllowanceRefresh) {
@@ -160,105 +178,127 @@ export function useBuyFlow(inputUSDT: string): UseBuyFlowReturn {
   }, [isBuyConfirmed, refetchBalance, refetchAllowance, refetchRemaining]);
 
   const mode = useMemo((): BuyFlowMode => {
-    if (isBuySigning || isBuyConfirming) return "PENDING";
+    // Transaction in progress takes highest priority
+    if (isBuyPending) return "PENDING";
     if (isBuyConfirmed) return "SUCCESS";
-    if (buyError || isBuyReceiptError) return "ERROR";
+    if (hasBuyError) return "ERROR";
 
-    if (isApproveSigning || isApproveConfirming || pendingAllowanceRefresh)
-      return "PENDING";
-    if (approveError || isApproveReceiptError) return "ERROR";
+    if (isApprovePending) return "PENDING";
+    if (hasApproveError) return "ERROR";
 
+    // Wallet / network pre-conditions
     if (!isConnected) return "CONNECT";
-    if (chainId !== polygon.id) return "WRONG_NETWORK";
+    if (!isOnPolygon) return "WRONG_NETWORK";
 
+    // Sale gate
     if (saleActive === false) return "SALE_INACTIVE";
 
-    if (!amountRaw) return "INVALID_AMOUNT";
-    if (maxBuyRaw !== undefined && amountRaw > maxBuyRaw)
-      return "INVALID_AMOUNT";
+    // Amount validation
+    if (!hasValidAmount || isAmountExceedsMax) return "INVALID_AMOUNT";
 
-    if (allowanceRaw === undefined) return "INVALID_AMOUNT";
-    if (amountRaw > allowanceRaw) return "APPROVE";
+    // Allowance not yet loaded — can't determine approval need
+    if (!isAllowanceLoaded) return "INVALID_AMOUNT";
+
+    // Approval step
+    if (needsApproval) return "APPROVE";
 
     return "BUY";
   }, [
-    isBuySigning,
-    isBuyConfirming,
+    isBuyPending,
     isBuyConfirmed,
-    buyError,
-    isBuyReceiptError,
-    isApproveSigning,
-    isApproveConfirming,
-    pendingAllowanceRefresh,
-    approveError,
-    isApproveReceiptError,
+    hasBuyError,
+    isApprovePending,
+    hasApproveError,
     isConnected,
-    chainId,
+    isOnPolygon,
     saleActive,
-    amountRaw,
-    maxBuyRaw,
-    allowanceRaw,
+    hasValidAmount,
+    isAmountExceedsMax,
+    isAllowanceLoaded,
+    needsApproval,
   ]);
 
   const usdtBalance = useMemo(() => {
-    if (balanceRaw === undefined || usdtDec === undefined) return "0";
-    return formatUnits(balanceRaw, usdtDec);
-  }, [balanceRaw, usdtDec]);
+    if (usdtBalanceRaw === undefined || usdtDecimals === undefined) {
+      return "0";
+    }
+
+    return formatUnits(usdtBalanceRaw, usdtDecimals);
+  }, [usdtBalanceRaw, usdtDecimals]);
 
   const maxBuy = useMemo(() => {
-    if (maxBuyRaw === undefined || usdtDec === undefined) return "0";
-    return formatUnits(maxBuyRaw, usdtDec);
-  }, [maxBuyRaw, usdtDec]);
+    if (maxBuyRaw === undefined || usdtDecimals === undefined) {
+      return "0";
+    }
+
+    return formatUnits(maxBuyRaw, usdtDecimals);
+  }, [maxBuyRaw, usdtDecimals]);
 
   const maxBuyNum = useMemo(() => parseFloat(maxBuy) || 0, [maxBuy]);
 
   const previewTokens = useMemo(() => {
-    if (previewRaw === undefined || shareDec === undefined) return "0";
-    return formatUnits(previewRaw, shareDec);
-  }, [previewRaw, shareDec]);
+    if (previewRaw === undefined || shareBalanceRaw === undefined) {
+      return "0";
+    }
 
-  const isLoading = useMemo(() => {
-    if (saleActive === undefined) return true;
-    if (usdtDec === undefined) return true;
-    if (isConnected && chainId === polygon.id && usdtAddress === undefined)
-      return true;
-    return false;
-  }, [saleActive, usdtDec, isConnected, chainId, usdtAddress]);
+    return formatUnits(previewRaw, Number(shareBalanceRaw));
+  }, [previewRaw, shareBalanceRaw]);
 
   const errorMessage = useMemo(() => {
-    if (buyError) return extractErrorMessage(buyError);
-    if (buyReceiptError) return extractErrorMessage(buyReceiptError);
-    if (approveError) return extractErrorMessage(approveError);
-    if (approveReceiptError) return extractErrorMessage(approveReceiptError);
-    return undefined;
+    if (buyError) {
+      return extractErrorMessage(buyError);
+    }
+
+    if (buyReceiptError) {
+      return extractErrorMessage(buyReceiptError);
+    }
+
+    if (approveError) {
+      return extractErrorMessage(approveError);
+    }
+
+    if (approveReceiptError) {
+      return extractErrorMessage(approveReceiptError);
+    }
+
+    return null;
   }, [buyError, buyReceiptError, approveError, approveReceiptError]);
 
   const validationError = useMemo((): string | null => {
-    if (!isConnected || chainId !== polygon.id) return null;
-    if (saleActive === false) return null;
-    if (!inputUSDT) return null;
+    const isConnectedOnPolygon = isConnected && isOnPolygon;
 
-    if (usdtDec !== undefined && !amountRaw)
+    if (!isConnectedOnPolygon || saleActive === false || !inputUSDT) {
+      return null;
+    }
+
+    const hasDecimalsButInvalidAmount =
+      usdtDecimals !== undefined && !hasValidAmount;
+
+    if (hasDecimalsButInvalidAmount) {
       return "Please enter a valid amount";
+    }
 
-    if (usdtDec === undefined || maxBuyRaw === undefined) return null;
+    if (usdtDecimals === undefined || maxBuyRaw === undefined) {
+      return null;
+    }
 
-    if (amountRaw && maxBuyRaw !== undefined && amountRaw > maxBuyRaw) {
+    if (isAmountExceedsMax) {
       return `Amount exceeds max available (${formatUnits(
         maxBuyRaw,
-        usdtDec
+        usdtDecimals
       )} USDT)`;
     }
 
     return null;
   }, [
     isConnected,
-    chainId,
+    isOnPolygon,
     saleActive,
     inputUSDT,
-    usdtDec,
-    amountRaw,
+    usdtDecimals,
+    hasValidAmount,
     maxBuyRaw,
+    isAmountExceedsMax,
   ]);
 
   const connectWallet = useCallback(() => {
@@ -310,10 +350,10 @@ export function useBuyFlow(inputUSDT: string): UseBuyFlowReturn {
     mode,
     previewTokens,
     saleActive,
-    shareTokenDecimals: shareDec,
+    shareTokenDecimals: shareBalanceRaw,
     txHash: buyHash,
     usdtBalance,
-    usdtDecimals: usdtDec,
+    usdtDecimals,
     validationError,
     approve,
     buy,

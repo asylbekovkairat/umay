@@ -16,7 +16,7 @@ export function useWalletBalance() {
     functionName: "usdt",
   });
 
-  const { data: usdtBalanceRaw } = useReadContract({
+  const { data: usdtBalanceRaw, refetch: refetchBalance } = useReadContract({
     address: usdtAddress,
     abi: erc20Abi,
     functionName: "balanceOf",
@@ -29,5 +29,6 @@ export function useWalletBalance() {
       usdtBalanceRaw && usdtDecimals
         ? formatUnits(usdtBalanceRaw, usdtDecimals!)
         : 0,
+    refetchBalance,
   };
 }
