@@ -1,5 +1,6 @@
 "use client";
 
+import { BuyTokensForm } from "@/src/features/buy-tokens";
 import { Header } from "@/src/widgets/header";
 import { WalletCard } from "@/src/widgets/wallet/wallet-card";
 
@@ -10,6 +11,7 @@ export function BuyTokensPage() {
 
       <main className="mx-auto max-w-dashboard space-y-6 px-4 py-8 sm:px-6">
         <WalletCard />
+        <BuyTokensForm />
       </main>
 
       <footer className="border-t border-border bg-card">

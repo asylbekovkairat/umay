@@ -16,7 +16,7 @@ import {
   TotalRaised,
   useTotalRaised,
 } from "@/src/entities/investment-pool/total-raised";
-import { isMobile } from "@/src/shared/lib";
+import { useIsMobile } from "@/src/shared/lib";
 import { Card } from "@/src/shared/ui/card";
 import { ProgressBar } from "@/src/shared/ui/progress-bar";
 
@@ -24,7 +24,8 @@ export function PoolOverview() {
   const { hardCapUSDTRaw } = useHardCap();
   const { totalRaisedUSDTRaw } = useTotalRaised();
 
-  const titleRight = !isMobile() && <PoolMode />;
+  const mobile = useIsMobile();
+  const titleRight = !mobile && <PoolMode />;
 
   return (
     <Card title="Pool Overview" titleRight={titleRight} collapsible>

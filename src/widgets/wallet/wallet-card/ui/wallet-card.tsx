@@ -1,9 +1,9 @@
 "use client";
 
-import { useWalletBalance } from "@/src/entities/connected-wallet/balance/model";
-import { MaxBuy } from "@/src/entities/connected-wallet/max-buy";
-import { ShareTokenBalance } from "@/src/entities/connected-wallet/share-token-balance";
-import { WalletAddress } from "@/src/entities/connected-wallet/wallet-address";
+import { useWalletBalance } from "@/src/entities/wallet/balance/model";
+import { MaxBuy } from "@/src/entities/wallet/max-buy";
+import { ShareTokenBalance } from "@/src/entities/wallet/share-token-balance";
+import { WalletAddress } from "@/src/entities/wallet/wallet-address";
 import { WalletConnectionHandler } from "@/src/features/wallet-connection-handler";
 import { Card } from "@/src/shared/ui/card";
 import { usePathname } from "next/navigation";
