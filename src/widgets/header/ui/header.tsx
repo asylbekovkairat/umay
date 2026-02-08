@@ -9,11 +9,11 @@ export function Header() {
             <h1 className="text-lg font-semibold">Umay</h1>
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        {/* <div className="flex flex-wrap items-center gap-3">
           <div className="flex flex-wrap gap-2">
             <WalletConnectionHandler />
           </div>
-        </div>
+        </div> */}
       </div>
     </header>
   );

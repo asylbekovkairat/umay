@@ -1,18 +1,14 @@
 "use client";
 
 import { Header } from "@/src/widgets/header";
-import { PoolCard } from "@/src/widgets/pool/pool-card";
-import { PoolOverview } from "@/src/widgets/pool/pool-overview";
 import { WalletCard } from "@/src/widgets/wallet/wallet-card";
 
-export function HomePage() {
+export function BuyTokensPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Header />
 
       <main className="mx-auto max-w-dashboard space-y-6 px-4 py-8 sm:px-6">
-        <PoolCard />
-        <PoolOverview />
         <WalletCard />
       </main>
 
