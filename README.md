@@ -1,36 +1,208 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Umay — Web3-инвестиционная платформа
 
-## Getting Started
+Umay — это Web3-инвестиционная платформа, которая привлекает финансирование в реальные сельскохозяйственные проекты через токенизацию на блокчейне.
 
-First, run the development server:
+## О проекте
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Umay соединяет Web3-инвесторов с реальным сельскохозяйственным сектором, позволяя инвестировать в агропроекты небольшими суммами, с прозрачным контролем и привязкой к реальному производству.
+
+### Основные направления деятельности
+
+- Отбор и структурирование сельскохозяйственных проектов (растениеводство, животноводство, агропроизводство)
+- Работа с сетью локальных фермерских хозяйств и агропартнёров
+- Токенизация каждого проекта с выпуском цифровых токенов, отражающих долю участия в конкретном проекте
+- Привлечение инвестиций через блокчейн и смарт-контракты
+- Использование escrow-механизмов для контроля целевого использования средств
+- Обеспечение прозрачности всех операций за счёт on-chain-учёта
+- Организация распределения доходов от реализации урожая между инвесторами
+- Управление рисками через диверсификацию проектов и страхование
+
+---
+
+## Технологический стек
+
+| Категория          | Технологии                                               |
+| ------------------ | -------------------------------------------------------- |
+| **Фреймворк**      | [Next.js 16](https://nextjs.org/) (App Router)          |
+| **Язык**           | TypeScript 5                                             |
+| **UI**             | React 19, Tailwind CSS 4                                 |
+| **Блокчейн**       | Wagmi 3, Viem 2                                          |
+| **Кошельки**       | MetaMask SDK, WalletConnect                              |
+| **Стейт-менеджмент** | TanStack React Query 5                                 |
+| **Сети**           | Polygon (основная), Ethereum Mainnet, Base               |
+| **Пакетный менеджер** | pnpm                                                  |
+
+---
+
+## Архитектура
+
+Проект построен по методологии [Feature-Sliced Design (FSD)](https://feature-sliced.design/):
+
+```
+src/
+├── app/                  # Провайдеры и глобальная конфигурация
+├── pages/                # Страницы приложения
+│   ├── home/             # Главная страница
+│   └── buy-tokens/       # Страница покупки токенов
+├── widgets/              # Составные UI-блоки
+│   ├── header/           # Шапка сайта
+│   ├── footer/           # Подвал сайта
+│   ├── pool/             # Карточки пула (баланс, обзор)
+│   └── wallet/           # Карточка кошелька
+├── features/             # Бизнес-фичи
+│   ├── buy-tokens/       # Покупка токенов (модель + UI)
+│   └── wallet-connection-handler/  # Логика подключения кошелька
+├── entities/             # Бизнес-сущности
+│   ├── investment-pool/  # Пул: статус, баланс, капитализация, адреса
+│   ├── wallet/           # Кошелёк: баланс, токены, адрес
+│   └── shared/           # Общие сущности (USDT decimals)
+└── shared/               # Переиспользуемый код
+    ├── abi/              # ABI смарт-контрактов (ERC-20, Investment Pool)
+    ├── assets/           # Иконки и статические ресурсы
+    ├── config/           # Конфигурация Wagmi (chains, connectors)
+    ├── consts/           # Константы и переменные окружения
+    ├── lib/              # Утилиты (форматирование, определение устройства)
+    └── ui/               # UI-компоненты (Badge, Button, Card и др.)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Маршруты приложения
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Маршрут        | Описание                      |
+| -------------- | ----------------------------- |
+| `/`            | Главная страница — обзор пула |
+| `/buy-tokens`  | Покупка токенов               |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Требования
 
-To learn more about Next.js, take a look at the following resources:
+- **Node.js** >= 18
+- **pnpm** >= 8 (рекомендуемый пакетный менеджер)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Установка и настройка
 
-## Deploy on Vercel
+### 1. Клонирование репозитория
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+git clone <repository-url>
+cd umay
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 2. Установка зависимостей
+
+```bash
+pnpm install
+```
+
+### 3. Настройка переменных окружения
+
+Создайте файл `.env.local` в корне проекта:
+
+```bash
+cp .env.local.example .env.local
+```
+
+Или создайте вручную файл `.env.local` со следующим содержимым:
+
+```env
+# Адрес смарт-контракта инвестиционного пула (Polygon)
+NEXT_PUBLIC_POOL_ADDRESS=0x...
+
+# RPC URL для сети Polygon
+NEXT_PUBLIC_RPC_URL_POLYGON=https://polygon-rpc.com
+
+# Project ID от WalletConnect (получить на https://cloud.walletconnect.com)
+NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_project_id_here
+```
+
+#### Описание переменных
+
+| Переменная                              | Обязательная | Описание                                                                 |
+| --------------------------------------- | ------------ | ------------------------------------------------------------------------ |
+| `NEXT_PUBLIC_POOL_ADDRESS`              | Да           | Адрес развёрнутого смарт-контракта Investment Pool в сети Polygon        |
+| `NEXT_PUBLIC_RPC_URL_POLYGON`           | Да           | URL RPC-ноды Polygon для чтения данных блокчейна                         |
+| `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID`  | Да           | ID проекта WalletConnect для подключения мобильных кошельков             |
+
+> Все переменные валидируются при запуске приложения. Если какая-либо отсутствует — приложение выбросит ошибку.
+
+---
+
+## Запуск
+
+### Режим разработки
+
+```bash
+pnpm dev
+```
+
+Приложение будет доступно по адресу: [http://localhost:3000](http://localhost:3000)
+
+### Продакшн-сборка
+
+```bash
+pnpm build
+pnpm start
+```
+
+## Смарт-контракты
+
+Приложение взаимодействует с двумя типами контрактов:
+
+### Investment Pool
+
+Основной контракт платформы. Поддерживает:
+
+- `buyTokens` — покупка токенов пула за USDT
+- `redeem` — выкуп (возврат) токенов
+- `previewBuy` / `previewRedeem` — предварительный расчёт операций
+- Чтение состояния: `saleActive`, `redeemActive`, `poolUSDTBalance`, `hardCapUSDT`, `totalRaisedUSDT`
+
+### ERC-20 (USDT)
+
+Стандартный интерфейс токена:
+
+- `balanceOf`, `allowance`, `approve`, `decimals`, `symbol`
+
+---
+
+## Подключение кошелька
+
+Поддерживаемые способы подключения:
+
+- **Injected** — браузерные кошельки (MetaMask, Rabby и др.)
+- **WalletConnect** — мобильные кошельки через QR-код
+
+Состояние кошелька сохраняется в cookies для корректной работы SSR.
+
+---
+
+## Алиасы путей
+
+В проекте настроены алиасы TypeScript для удобного импорта:
+
+| Алиас             | Путь              |
+| ----------------- | ----------------- |
+| `@/*`             | `./*`             |
+| `@/app/*`         | `./src/app/*`     |
+| `@/pages/*`       | `./src/pages/*`   |
+| `@/widgets/*`     | `./src/widgets/*` |
+| `@/features/*`    | `./src/features/*`|
+| `@/entities/*`    | `./src/entities/*`|
+| `@/shared/*`      | `./src/shared/*`  |
+
+---
+
+## Стилизация
+
+- **Tailwind CSS 4** — utility-first подход
+- Тёмная тема с Web3-эстетикой (глубокий тёмно-синий фон `#0b0f1a`, акцентный лаймовый `#a3e635`)
+- Glass morphism эффекты (`backdrop-blur`)
+- Шрифты: Geist Sans (основной), Geist Mono (моноширинный) — загружаются через `next/font`
+
+---
+
+## Лицензия
+
+Private
